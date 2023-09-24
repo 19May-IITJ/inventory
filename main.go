@@ -1,15 +1,18 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"inventory/modules/inventory"
+	"inventory/modules/item"
+	"inventory/modules/utility"
 	"os"
 )
 
 func main() {
-	inventory := inventory.Inventory{}
+	inventory := inventory.Inventory{ItemsByType: make(map[string][]item.Item)}
 	for {
-		fmt.Println("\nInventory Management System")
+		fmt.Println("\n****Inventory Management System****")
 		fmt.Println("1. Add Item")
 		fmt.Println("2. Update Quantity")
 		fmt.Println("3. List Items")
@@ -18,6 +21,7 @@ func main() {
 
 		var choice int
 		_, err := fmt.Scanf("%d", &choice)
+
 		if err != nil {
 			fmt.Println("Invalid input. Please enter a valid option.")
 			continue
@@ -26,37 +30,51 @@ func main() {
 		switch choice {
 		case 1:
 			var name string
-			var quantity int
-
+			var quantity, itemType int
 			fmt.Print("Enter the item name: ")
-			fmt.Scanln(&name)
 
+			scanner := bufio.NewScanner(os.Stdin)
+			scanner.Scan()
+			name = scanner.Text()
+
+			fmt.Println(name)
+			fmt.Print("Enter the item type from below category: ")
+			utility.DisplayItemCategory()
+			fmt.Scanln(&itemType)
 			fmt.Print("Enter the quantity: ")
 			fmt.Scanf("%d", &quantity)
-
-			inventory.AddItem(name, quantity)
+			inventory.AddItem(name, quantity, itemType)
 			fmt.Println("Item added to the inventory.")
 		case 2:
-			var id, newQuantity int
+			var (
+				itemType int
+			)
 
-			fmt.Print("Enter the item ID to update: ")
-			fmt.Scanf("%d", &id)
+			fmt.Print("Enter the item type to update from below category: ")
+			utility.DisplayItemCategory()
+			fmt.Scanln(&itemType)
 
-			fmt.Print("Enter the new quantity: ")
-			fmt.Scanf("%d", &newQuantity)
-
-			err := inventory.UpdateQuantity(id, newQuantity)
+			err := inventory.UpdateQuantity(itemType)
 			if err != nil {
 				fmt.Println(err)
 			} else {
 				fmt.Println("Quantity updated successfully.")
 			}
+
 		case 3:
-			inventory.ListItems()
+			fmt.Println("\nSelect Item Type ")
+			utility.DisplayItemCategory()
+			fmt.Println("7 All")
+			fmt.Print("Select an option: ")
+			var itemType int
+			fmt.Scanln(&itemType)
+			inventory.ListItems(itemType)
 		case 4:
 			os.Exit(0)
 		default:
 			fmt.Println("Invalid option. Please choose a valid option.")
+
 		}
 	}
+
 }
