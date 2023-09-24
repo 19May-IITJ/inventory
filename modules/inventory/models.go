@@ -41,14 +41,6 @@ func (inv *Inventory) UpdateQuantity(itemtype int) error {
 	fmt.Println("Enter the new quantity")
 	fmt.Scanln(&newQuantity)
 
-	// for itemType, items := range inv.ItemsByType {
-	// 	for i, item := range items {
-	// 		if item.ID == id {
-	// 			inv.ItemsByType[itemType][i].Quantity = quantity
-	// 			return nil
-	// 		}
-	// 	}
-	// }
 	t := item.GetItemType(itemtype).TypeKind
 
 	items := inv.ItemsByType[t]
